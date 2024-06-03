@@ -32,6 +32,9 @@ const run = async () => {
 
     // created a new MongoDB Database Collection
     const studySession = client.db("EduCollaborate").collection("StudySession");
+    const bookedStudySession = client
+      .db("EduCollaborate")
+      .collection("BookedStudySession");
 
     // study session routes
     app.get("/study-session", async (req, res) => {
@@ -41,7 +44,9 @@ const run = async () => {
           tutorName: 1,
           sessionDescription: 1,
           fee: 1,
+          registrationStartDate: 1,
           registrationEndDate: 1,
+          image: 1,
         },
       };
       const studySessions = await studySession.find({}, options).toArray();
@@ -54,6 +59,12 @@ const run = async () => {
       res.send(result);
     });
 
+    // booked study session routes
+    app.post("/study-session-booked", async (req, res) => {
+      const studySessionData = req.body;
+      const result = await bookedStudySession.insertOne(studySessionData);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
