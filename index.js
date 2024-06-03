@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
@@ -65,6 +66,20 @@ const run = async () => {
       const result = await bookedStudySession.insertOne(studySessionData);
       res.send(result);
     });
+
+    // create json web token in user information
+    app.post("/user-login", async (req, res) => {
+      const userInfo = req.body;
+      const userToken = jwt.sign(
+        userInfo,
+        process.env.USER_ACCESS_TOKEN_SECRET,
+        {
+          expiresIn: process.env.USER_EXPIRED,
+        }
+      );
+      res.send({ userToken });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
