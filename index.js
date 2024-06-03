@@ -84,6 +84,14 @@ const run = async () => {
     // user registration data added to database
     app.post("/users", async (req, res) => {
       const userData = req.body;
+      const query = { email: userData.email };
+
+      const existingEmail = await allUsers.findOne(query);
+      if (existingEmail) {
+        return res
+          .status(400)
+          .send({ message: "Email already exists!", insertedId: null });
+      }
       const result = await allUsers.insertOne(userData);
       res.send(result);
     });
