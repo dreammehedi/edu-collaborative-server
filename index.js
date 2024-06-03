@@ -36,6 +36,7 @@ const run = async () => {
     const bookedStudySession = client
       .db("EduCollaborate")
       .collection("BookedStudySession");
+    const allUsers = client.db("EduCollaborate").collection("AllUsers");
 
     // study session routes
     app.get("/study-session", async (req, res) => {
@@ -78,6 +79,13 @@ const run = async () => {
         }
       );
       res.send({ userToken });
+    });
+
+    // user registration data added to database
+    app.post("/users", async (req, res) => {
+      const userData = req.body;
+      const result = await allUsers.insertOne(userData);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
