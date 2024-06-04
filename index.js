@@ -120,6 +120,7 @@ const run = async () => {
       res.send(result);
     });
 
+    // user data get
     app.get("/users", verifyToken, async (req, res) => {
       const userFilter = req.query.userFilter;
       const UserFilterQuery = {
@@ -134,6 +135,7 @@ const run = async () => {
       res.send(result);
     });
 
+    // user role update
     app.patch("/update-role", verifyToken, async (req, res) => {
       const id = req.body._id;
       const email = req.body.email;
@@ -141,6 +143,23 @@ const run = async () => {
       const update = { $set: { role: "admin" } };
       const result = await allUsers.updateOne(query, update);
       res.send(result);
+    });
+
+    // check user is admin
+    app.get("/user/admin/:email", verifyToken, async (req, res) => {
+      const email = req.params.email;
+
+      if (email !== req.decodedToken.email) {
+        return res.status(401).send({
+          message: "You are not authorized to access this route.",
+        });
+      }
+      const query = { email: email };
+      const result = await allUsers.findOne(query);
+      if (result?.role === "admin") {
+        return res.send(true);
+      }
+      return res.send(false);
     });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
