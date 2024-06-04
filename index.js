@@ -73,6 +73,17 @@ const run = async () => {
       }
       next();
     };
+    // middleware verify admin
+    const verifyTutor = async (req, res, next) => {
+      const email = req.decodedToken.email;
+      const query = { email: email };
+      const user = await allUsers.findOne(query);
+      const isTutor = user?.role === "tutor";
+      if (!isTutor) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
+    };
 
     // study session routes
     app.get("/study-session", async (req, res) => {
@@ -99,11 +110,29 @@ const run = async () => {
     });
 
     // create study session
-    app.post("/create-study-session", async (req, res) => {
-      const studySessionData = req.body;
-      const result = await studySession.insertOne(studySessionData);
-      res.send(result);
-    });
+    app.post(
+      "/create-study-session",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const studySessionData = req.body;
+        const result = await studySession.insertOne(studySessionData);
+        res.send(result);
+      }
+    );
+
+    // view all study sessions in tutor
+    app.get(
+      "/view-all-study-session-tutor/:email",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const email = req.params.email;
+        const query = { tutorEmail: email };
+        const result = await studySession.find(query).toArray();
+        res.send(result);
+      }
+    );
 
     // booked study session routes
     app.post("/study-session-booked", async (req, res) => {
