@@ -174,6 +174,24 @@ const run = async () => {
 
       return res.send(false);
     });
+
+    // check user is student
+    app.get("/user/student/:email", verifyToken, async (req, res) => {
+      const email = req.params.email;
+      if (email !== req.decodedToken.email) {
+        return res.status(401).send({
+          message: "You are not authorized to access this route.",
+        });
+      }
+      const query = { email: email };
+      const result = await allUsers.findOne(query);
+      if (result?.role === "student") {
+        return res.send(true);
+      }
+
+      return res.send(false);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
