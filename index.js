@@ -62,6 +62,18 @@ const run = async () => {
       .collection("BookedStudySession");
     const allUsers = client.db("EduCollaborate").collection("AllUsers");
 
+    // middleware verify admin
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decodedToken.email;
+      const query = { email: email };
+      const user = await allUsers.findOne(query);
+      const isAdmin = user?.role === "admin";
+      if (!isAdmin) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
+    };
+
     // study session routes
     app.get("/study-session", async (req, res) => {
       const options = {
@@ -121,7 +133,7 @@ const run = async () => {
     });
 
     // user data get
-    app.get("/users", verifyToken, async (req, res) => {
+    app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       const userFilter = req.query.userFilter;
       const UserFilterQuery = {
         $or: [{ email: userFilter }, { name: userFilter }],
@@ -136,7 +148,7 @@ const run = async () => {
     });
 
     // user role update
-    app.patch("/update-role", verifyToken, async (req, res) => {
+    app.patch("/update-role", verifyToken, verifyAdmin, async (req, res) => {
       const id = req.body._id;
       const email = req.body.email;
       const query = { _id: new ObjectId(id), email: email };
