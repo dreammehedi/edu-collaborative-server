@@ -10,6 +10,30 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// my middleware
+const verifyToken = (req, res, next) => {
+  const authorizationToken = req.headers.authorization;
+  if (!authorizationToken) {
+    return res.status(401).send({
+      message: "You are not authorized to access this route.",
+    });
+  }
+  const userToken = req.headers.authorization.split(" ")[1];
+
+  jwt.verify(
+    userToken,
+    process.env.USER_ACCESS_TOKEN_SECRET,
+    (err, decoded) => {
+      if (err) {
+        return res.status(401).send({ message: "unauthorized access" });
+      }
+      req.decodedToken = decoded;
+
+      next();
+    }
+  );
+};
+
 // home routes
 app.get("/", (req, res) => {
   res.send("Welcome EduCollaborate Server.");
@@ -96,7 +120,7 @@ const run = async () => {
       res.send(result);
     });
 
-    app.get("/users", async (req, res) => {
+    app.get("/users", verifyToken, async (req, res) => {
       const userFilter = req.query.userFilter;
       const UserFilterQuery = {
         $or: [{ email: userFilter }, { name: userFilter }],
@@ -110,7 +134,7 @@ const run = async () => {
       res.send(result);
     });
 
-    app.patch("/update-role", async (req, res) => {
+    app.patch("/update-role", verifyToken, async (req, res) => {
       const id = req.body._id;
       const email = req.body.email;
       const query = { _id: new ObjectId(id), email: email };
