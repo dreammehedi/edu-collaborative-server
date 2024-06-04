@@ -96,6 +96,19 @@ const run = async () => {
       res.send(result);
     });
 
+    app.get("/users", async (req, res) => {
+      const result = await allUsers.find().toArray();
+      res.send(result);
+    });
+
+    app.patch("/update-role", async (req, res) => {
+      const id = req.body._id;
+      const email = req.body.email;
+      const query = { _id: new ObjectId(id), email: email };
+      const update = { $set: { role: "admin" } };
+      const result = await allUsers.updateOne(query, update);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
