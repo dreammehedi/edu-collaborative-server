@@ -159,6 +159,7 @@ const run = async () => {
       if (result?.role === "admin") {
         return res.send(true);
       }
+
       return res.send(false);
     });
     // Send a ping to confirm a successful connection
