@@ -97,6 +97,15 @@ const run = async () => {
     });
 
     app.get("/users", async (req, res) => {
+      const userFilter = req.query.userFilter;
+      const UserFilterQuery = {
+        $or: [{ email: userFilter }, { name: userFilter }],
+      };
+      const userFilterResult = await allUsers.findOne(UserFilterQuery);
+      if (userFilterResult) {
+        return res.send([userFilterResult]);
+      }
+
       const result = await allUsers.find().toArray();
       res.send(result);
     });
