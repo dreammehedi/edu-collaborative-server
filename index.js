@@ -61,6 +61,9 @@ const run = async () => {
       .db("EduCollaborate")
       .collection("BookedStudySession");
     const allUsers = client.db("EduCollaborate").collection("AllUsers");
+    const studySessionRejectionResonFeedback = client
+      .db("EduCollaborate")
+      .collection("StudySessionRejectionResonFeedback");
 
     // middleware verify admin
     const verifyAdmin = async (req, res, next) => {
@@ -191,6 +194,15 @@ const run = async () => {
         res.send(result);
       }
     );
+
+    // study session rejection reson and feedback data added to database
+    app.post("/study-session-reject-reson-feedback", async (req, res) => {
+      const studySessionRejectionData = req.body;
+      const result = await studySessionRejectionResonFeedback.insertOne(
+        studySessionRejectionData
+      );
+      res.send(result);
+    });
 
     // booked study session routes
     app.post("/study-session-booked", async (req, res) => {
