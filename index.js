@@ -86,6 +86,15 @@ const run = async () => {
     };
 
     // study session routes
+    app.get(
+      "/all-study-session-admin",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const studySessions = await studySession.find().toArray();
+        res.send(studySessions);
+      }
+    );
     app.get("/study-session", async (req, res) => {
       const options = {
         projection: {
@@ -134,11 +143,36 @@ const run = async () => {
       }
     );
 
-    // rejected status re request status to pending
+    // study session status accept
+    app.patch("/status-accept-request/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedStatusData = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updateStatus = {
+        $set: {
+          status: "success",
+          fee: updatedStatusData.fee,
+          maxParticipants: updatedStatusData.maxParticipants,
+        },
+      };
+      const result = await studySession.updateOne(query, updateStatus);
+      res.send(result);
+    });
+
+    // study session status pending
     app.patch("/status-pending-request/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const updateStatus = { $set: { status: "pending" } };
+      const result = await studySession.updateOne(query, updateStatus);
+      res.send(result);
+    });
+
+    // study session status reject
+    app.patch("/status-reject-request/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updateStatus = { $set: { status: "rejected" } };
       const result = await studySession.updateOne(query, updateStatus);
       res.send(result);
     });
