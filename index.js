@@ -168,7 +168,7 @@ const run = async () => {
     app.patch(
       "/status-pending-request/:id",
       verifyToken,
-      verifyAdmin,
+      verifyTutor,
       async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
