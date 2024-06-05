@@ -134,6 +134,15 @@ const run = async () => {
       }
     );
 
+    // rejected status re request status to pending
+    app.patch("/status-pending-request/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const updateStatus = { $set: { status: "pending" } };
+      const result = await studySession.updateOne(query, updateStatus);
+      res.send(result);
+    });
+
     // booked study session routes
     app.post("/study-session-booked", async (req, res) => {
       const studySessionData = req.body;
