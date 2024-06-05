@@ -144,38 +144,53 @@ const run = async () => {
     );
 
     // study session status accept
-    app.patch("/status-accept-request/:id", async (req, res) => {
-      const id = req.params.id;
-      const updatedStatusData = req.body;
-      const query = { _id: new ObjectId(id) };
-      const updateStatus = {
-        $set: {
-          status: "success",
-          fee: updatedStatusData.fee,
-          maxParticipants: updatedStatusData.maxParticipants,
-        },
-      };
-      const result = await studySession.updateOne(query, updateStatus);
-      res.send(result);
-    });
+    app.patch(
+      "/status-accept-request/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const updatedStatusData = req.body;
+        const query = { _id: new ObjectId(id) };
+        const updateStatus = {
+          $set: {
+            status: "success",
+            fee: updatedStatusData.fee,
+            maxParticipants: updatedStatusData.maxParticipants,
+          },
+        };
+        const result = await studySession.updateOne(query, updateStatus);
+        res.send(result);
+      }
+    );
 
     // study session status pending
-    app.patch("/status-pending-request/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const updateStatus = { $set: { status: "pending" } };
-      const result = await studySession.updateOne(query, updateStatus);
-      res.send(result);
-    });
+    app.patch(
+      "/status-pending-request/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const updateStatus = { $set: { status: "pending" } };
+        const result = await studySession.updateOne(query, updateStatus);
+        res.send(result);
+      }
+    );
 
     // study session status reject
-    app.patch("/status-reject-request/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const updateStatus = { $set: { status: "rejected" } };
-      const result = await studySession.updateOne(query, updateStatus);
-      res.send(result);
-    });
+    app.patch(
+      "/status-reject-request/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const updateStatus = { $set: { status: "rejected" } };
+        const result = await studySession.updateOne(query, updateStatus);
+        res.send(result);
+      }
+    );
 
     // booked study session routes
     app.post("/study-session-booked", async (req, res) => {
