@@ -69,6 +69,10 @@ const run = async () => {
       .db("EduCollaborate")
       .collection("StudySessionStudentReview");
 
+    const studentCreateNote = client
+      .db("EduCollaborate")
+      .collection("StudentCreateNote");
+
     // middleware verify admin
     const verifyAdmin = async (req, res, next) => {
       const email = req.decodedToken.email;
@@ -237,6 +241,13 @@ const run = async () => {
       const result = await studySessionStudentReview.insertOne(
         reviewRatingData
       );
+      res.send(result);
+    });
+
+    // user created note
+    app.post("/student-creat-note", async (req, res) => {
+      const studentCreateNoteData = req.body;
+      const result = await studentCreateNote.insertOne(studentCreateNoteData);
       res.send(result);
     });
 
