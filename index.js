@@ -259,6 +259,14 @@ const run = async () => {
       res.send(result);
     });
 
+    // delete create note student
+    app.delete("/delete-create-note/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await studentCreateNote.deleteOne(query);
+      res.send(result);
+    });
+
     // create json web token in user information
     app.post("/user-login", async (req, res) => {
       const userInfo = req.body;
