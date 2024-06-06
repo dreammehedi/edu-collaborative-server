@@ -211,6 +211,14 @@ const run = async () => {
       res.send(result);
     });
 
+    // get student booked study session routes
+    app.get("/view-student-booked-session/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { studentEmail: email };
+      const result = await bookedStudySession.find(query).toArray();
+      res.send(result);
+    });
+
     // create json web token in user information
     app.post("/user-login", async (req, res) => {
       const userInfo = req.body;
