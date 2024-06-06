@@ -65,6 +65,10 @@ const run = async () => {
       .db("EduCollaborate")
       .collection("StudySessionRejectionResonFeedback");
 
+    const studySessionStudentReview = client
+      .db("EduCollaborate")
+      .collection("StudySessionStudentReview");
+
     // middleware verify admin
     const verifyAdmin = async (req, res, next) => {
       const email = req.decodedToken.email;
@@ -226,6 +230,16 @@ const run = async () => {
       const result = await bookedStudySession.findOne(query);
       res.send(result);
     });
+
+    // post student booked study session detailes review & rating
+    app.post("/view-student-booked-session-review-rating", async (req, res) => {
+      const reviewRatingData = req.body;
+      const result = await studySessionStudentReview.insertOne(
+        reviewRatingData
+      );
+      res.send(result);
+    });
+
     // create json web token in user information
     app.post("/user-login", async (req, res) => {
       const userInfo = req.body;
