@@ -219,6 +219,13 @@ const run = async () => {
       res.send(result);
     });
 
+    // get student booked study session detailes routes
+    app.get("/view-student-booked-session-detailes/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await bookedStudySession.findOne(query);
+      res.send(result);
+    });
     // create json web token in user information
     app.post("/user-login", async (req, res) => {
       const userInfo = req.body;
