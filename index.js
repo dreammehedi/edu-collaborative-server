@@ -267,6 +267,24 @@ const run = async () => {
       res.send(result);
     });
 
+    // update create note student
+    app.patch("/update-create-note/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateNoteData = req.body;
+      const newUpdateNoteData = {
+        $set: {
+          noteTitle: updateNoteData.noteTitle,
+          noteDescription: updateNoteData.noteDescription,
+        },
+      };
+      const query = { _id: new ObjectId(id) };
+      const result = await studentCreateNote.updateOne(
+        query,
+        newUpdateNoteData
+      );
+      res.send(result);
+    });
+
     // create json web token in user information
     app.post("/user-login", async (req, res) => {
       const userInfo = req.body;
