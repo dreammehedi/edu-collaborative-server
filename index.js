@@ -244,10 +244,18 @@ const run = async () => {
       res.send(result);
     });
 
-    // user created note
+    // student created note
     app.post("/student-creat-note", async (req, res) => {
       const studentCreateNoteData = req.body;
       const result = await studentCreateNote.insertOne(studentCreateNoteData);
+      res.send(result);
+    });
+
+    // get student created note
+    app.get("/student-personal-note/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { studentEmail: email };
+      const result = await studentCreateNote.find(query).toArray();
       res.send(result);
     });
 
