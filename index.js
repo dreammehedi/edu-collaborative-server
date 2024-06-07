@@ -106,6 +106,8 @@ const run = async () => {
         res.send(studySessions);
       }
     );
+
+    // get accepted study session
     app.get("/study-session", async (req, res) => {
       const options = {
         projection: {
@@ -118,10 +120,13 @@ const run = async () => {
           image: 1,
         },
       };
-      const studySessions = await studySession.find({}, options).toArray();
+      const studySessions = await studySession
+        .find({ status: "success" }, options)
+        .toArray();
       res.send(studySessions);
     });
 
+    // get accepted study session detailes
     app.get("/study-session-detailes/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
