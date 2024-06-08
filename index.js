@@ -7,7 +7,15 @@ require("dotenv").config();
 const port = process.env.PORT || 5000;
 
 // middleware for server
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://educollaborate-study.web.app",
+      "https://educollaborate-study.firebaseapp.com",
+    ],
+  })
+);
 app.use(express.json());
 
 // my middleware
@@ -53,7 +61,7 @@ const client = new MongoClient(uri, {
 // connect to MongoDB
 const run = async () => {
   try {
-    await client.connect();
+    // await client.connect();
 
     // created a new MongoDB Database Collection
     const studySession = client.db("EduCollaborate").collection("StudySession");
@@ -430,10 +438,10 @@ const run = async () => {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // await client.close();
   }
