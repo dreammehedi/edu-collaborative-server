@@ -341,6 +341,13 @@ const run = async () => {
       res.send(result);
     });
 
+    // all tutor users
+    app.get("/all-tutor", async (req, res) => {
+      const query = { role: "tutor" };
+      const result = await allUsers.find(query).toArray();
+      res.send(result);
+    });
+
     // check user role
     app.get("/check-user-role/:email", async (req, res) => {
       const userEmail = req.params.email;
