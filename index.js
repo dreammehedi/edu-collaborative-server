@@ -134,6 +134,14 @@ const run = async () => {
       res.send(result);
     });
 
+    // view study session rejected reson & feedback
+    app.get("/view-rejected-reson-feedback/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { studySessionId: id };
+      const result = await studySessionRejectionResonFeedback.findOne(query);
+      res.send(result);
+    });
+
     // create study session
     app.post(
       "/create-study-session",
