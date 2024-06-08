@@ -249,6 +249,14 @@ const run = async () => {
       res.send(result);
     });
 
+    // get study session review data
+    app.get("/study-session-review/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { studentBookedSessionId: id };
+      const result = await studySessionStudentReview.find(query).toArray();
+      res.send(result);
+    });
+
     // student created note
     app.post("/student-creat-note", async (req, res) => {
       const studentCreateNoteData = req.body;
@@ -331,6 +339,18 @@ const run = async () => {
 
       const result = await allUsers.find().toArray();
       res.send(result);
+    });
+
+    // check user role
+    app.get("/check-user-role/:email", async (req, res) => {
+      const userEmail = req.params.email;
+      const query = { email: userEmail };
+      const findResult = await allUsers.findOne(query);
+      if (findResult?.role === "student") {
+        return res.send({ resUserRoleIs: true });
+      } else {
+        return res.send({ resUserRoleIs: false });
+      }
     });
 
     // user role update
