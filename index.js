@@ -146,7 +146,9 @@ const run = async () => {
     app.get("/view-rejected-reson-feedback/:id", async (req, res) => {
       const id = req.params.id;
       const query = { studySessionId: id };
-      const result = await studySessionRejectionResonFeedback.findOne(query);
+      const result = await studySessionRejectionResonFeedback
+        .find(query)
+        .toArray();
       res.send(result);
     });
 
