@@ -238,6 +238,20 @@ const run = async () => {
     // booked study session routes
     app.post("/study-session-booked", async (req, res) => {
       const studySessionData = req.body;
+      const studySessionMainId = studySessionData?.studySessionId;
+      const studySessionBookedStudentEmail = studySessionData?.studentEmail;
+
+      const queryStudySessionMainData = {
+        studySessionId: studySessionMainId,
+        studentEmail: studySessionBookedStudentEmail,
+      };
+      const existingStudentBookedStudySession =
+        await bookedStudySession.findOne(queryStudySessionMainData);
+
+      if (existingStudentBookedStudySession) {
+        return res.send({ message: "Already Booked!" });
+      }
+
       const result = await bookedStudySession.insertOne(studySessionData);
       res.send(result);
     });
