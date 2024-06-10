@@ -97,7 +97,7 @@ const run = async () => {
       }
       next();
     };
-    // middleware verify admin
+    // middleware verify tutor
     const verifyTutor = async (req, res, next) => {
       const email = req.decodedToken.email;
       const query = { email: email };
@@ -203,12 +203,16 @@ const run = async () => {
     );
 
     // get study sessin material student booked
-    app.get("/all-material-student-booked-session/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { mainStudySessionId: id };
-      const result = await studySessionMaterial.find(query).toArray();
-      res.send(result);
-    });
+    app.get(
+      "/all-material-student-booked-session/:id",
+      verifyToken,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { mainStudySessionId: id };
+        const result = await studySessionMaterial.find(query).toArray();
+        res.send(result);
+      }
+    );
 
     // update material study session
     app.patch(
