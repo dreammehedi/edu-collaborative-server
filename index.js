@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPT_SECRET_KEY);
 const port = process.env.PORT || 5000;
 
 // middleware for server
@@ -61,7 +62,7 @@ const client = new MongoClient(uri, {
 // connect to MongoDB
 const run = async () => {
   try {
-    // await client.connect();
+    await client.connect();
 
     // created a new MongoDB Database Collection
     const studySession = client.db("EduCollaborate").collection("StudySession");
@@ -235,6 +236,29 @@ const run = async () => {
       res.send(result);
     });
 
+    // // check study session already booked by user before payment
+    app.post(
+      "/check-study-session-already-booked-by-user",
+      async (req, res) => {
+        const studySessionData = req.body;
+        const studySessionMainId = studySessionData?.studySessionId;
+        const studySessionBookedStudentEmail = studySessionData?.studentEmail;
+
+        const queryStudySessionMainData = {
+          studySessionId: studySessionMainId,
+          studentEmail: studySessionBookedStudentEmail,
+        };
+        const existingStudentBookedStudySession =
+          await bookedStudySession.findOne(queryStudySessionMainData);
+
+        if (existingStudentBookedStudySession) {
+          return res.send({ message: "Already Booked!" });
+        } else {
+          return res.send({ message: "Not Booked!" });
+        }
+      }
+    );
+
     // booked study session routes
     app.post("/study-session-booked", async (req, res) => {
       const studySessionData = req.body;
@@ -251,9 +275,23 @@ const run = async () => {
       if (existingStudentBookedStudySession) {
         return res.send({ message: "Already Booked!" });
       }
-
       const result = await bookedStudySession.insertOne(studySessionData);
       res.send(result);
+    });
+
+    // study session booked before payment
+    app.post("/create-payment-intent", async (req, res) => {
+      const { fee } = req.body;
+      const priceInt = parseInt(fee * 100);
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: priceInt,
+        currency: "usd",
+        payment_method_types: ["card"],
+      });
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
     });
 
     // get student booked study session routes
