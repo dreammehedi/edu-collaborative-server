@@ -82,6 +82,10 @@ const run = async () => {
       .db("EduCollaborate")
       .collection("StudentCreateNote");
 
+    const studySessionMaterial = client
+      .db("EduCollaborate")
+      .collection("StudySessionMaterial");
+
     // middleware verify admin
     const verifyAdmin = async (req, res, next) => {
       const email = req.decodedToken.email;
@@ -134,6 +138,19 @@ const run = async () => {
         .toArray();
       res.send(studySessions);
     });
+
+    // study session material upload by tutor
+    app.post(
+      "/upload-study-session-material",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const data = req.body;
+
+        const result = await studySessionMaterial.insertOne(data);
+        res.send(result);
+      }
+    );
 
     // get accepted study session detailes
     app.get("/study-session-detailes/:id", async (req, res) => {
@@ -206,6 +223,19 @@ const run = async () => {
       async (req, res) => {
         const email = req.params.email;
         const query = { tutorEmail: email };
+        const result = await studySession.find(query).toArray();
+        res.send(result);
+      }
+    );
+
+    // view all study success sessions in tutor
+    app.get(
+      "/view-all-study-success-session-tutor/:email",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const email = req.params.email;
+        const query = { tutorEmail: email, status: "success" };
         const result = await studySession.find(query).toArray();
         res.send(result);
       }
