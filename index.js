@@ -152,6 +152,32 @@ const run = async () => {
       }
     );
 
+    // all material get by tutor
+    app.get(
+      "/all-study-session-material/:email",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const email = req.params.email;
+        const query = { tutorEmail: email };
+        const result = await studySessionMaterial.find(query).toArray();
+        res.send(result);
+      }
+    );
+
+    // delete material study session
+    app.delete(
+      "/delete-study-session-material/:id",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await studySessionMaterial.deleteOne(query);
+        res.send(result);
+      }
+    );
+
     // get accepted study session detailes
     app.get("/study-session-detailes/:id", async (req, res) => {
       const id = req.params.id;
