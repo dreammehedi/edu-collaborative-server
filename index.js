@@ -165,11 +165,35 @@ const run = async () => {
       }
     );
 
-    // delete material study session
+    // all materials get by admin
+    app.get(
+      "/all-study-session-material-by-admin",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const result = await studySessionMaterial.find().toArray();
+        res.send(result);
+      }
+    );
+
+    // delete material study session by tutor
     app.delete(
       "/delete-study-session-material/:id",
       verifyToken,
       verifyTutor,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await studySessionMaterial.deleteOne(query);
+        res.send(result);
+      }
+    );
+
+    // delete material study session by admin
+    app.delete(
+      "/delete-study-session-material-by-admin/:id",
+      verifyToken,
+      verifyAdmin,
       async (req, res) => {
         const id = req.params.id;
         const query = { _id: new ObjectId(id) };
