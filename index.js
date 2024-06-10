@@ -156,6 +156,26 @@ const run = async () => {
       }
     );
 
+    // update study session price and max participants
+    app.patch(
+      "/update-study-session-price-maxparticipants/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const data = req.body;
+        const query = { _id: new ObjectId(id) };
+        const updatedStudyPriceMaxParticipants = {
+          $set: { fee: data?.fee, maxParticipants: data?.maxParticipants },
+        };
+        const result = await studySession.updateOne(
+          query,
+          updatedStudyPriceMaxParticipants
+        );
+        res.send(result);
+      }
+    );
+
     // view study session rejected reson & feedback
     app.get("/view-rejected-reson-feedback/:id", async (req, res) => {
       const id = req.params.id;
