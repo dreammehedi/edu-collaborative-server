@@ -294,11 +294,24 @@ const run = async () => {
       });
     });
 
+    // get student booked study session count
+    app.get("/view-student-booked-session-count/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { studentEmail: email };
+      const result = await bookedStudySession.countDocuments(query);
+      res.send({ bookedSessionCount: result });
+    });
+
     // get student booked study session routes
     app.get("/view-student-booked-session/:email", async (req, res) => {
       const email = req.params.email;
+      const page = parseInt(req.query.page);
       const query = { studentEmail: email };
-      const result = await bookedStudySession.find(query).toArray();
+      const result = await bookedStudySession
+        .find(query)
+        .skip(page * 3)
+        .limit(3)
+        .toArray();
       res.send(result);
     });
 
