@@ -409,9 +409,16 @@ const run = async () => {
       res.send(result);
     });
 
+    // users count
+    app.get("/users-count", async (req, res) => {
+      const result = await allUsers.countDocuments();
+      res.send({ usersCount: result });
+    });
+
     // user data get
     app.get("/users", verifyToken, verifyAdmin, async (req, res) => {
       const userFilter = req.query.userFilter;
+      const page = parseInt(req.query.page);
       const UserFilterQuery = {
         $or: [{ email: userFilter }, { name: userFilter }],
       };
@@ -420,7 +427,11 @@ const run = async () => {
         return res.send([userFilterResult]);
       }
 
-      const result = await allUsers.find().toArray();
+      const result = await allUsers
+        .find()
+        .skip(page * 5)
+        .limit(5)
+        .toArray();
       res.send(result);
     });
 
