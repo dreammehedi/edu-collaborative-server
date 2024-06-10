@@ -202,6 +202,14 @@ const run = async () => {
       }
     );
 
+    // get study sessin material student booked
+    app.get("/all-material-student-booked-session/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { mainStudySessionId: id };
+      const result = await studySessionMaterial.find(query).toArray();
+      res.send(result);
+    });
+
     // update material study session
     app.patch(
       "/update-study-session-material/:id",
@@ -436,6 +444,13 @@ const run = async () => {
       const query = { studentEmail: email };
       const result = await bookedStudySession.countDocuments(query);
       res.send({ bookedSessionCount: result });
+    });
+    // view booked study session student
+    app.get("/view-booked-study-session-student/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { studentEmail: email };
+      const result = await bookedStudySession.find(query).toArray();
+      res.send(result);
     });
 
     // get student booked study session routes
