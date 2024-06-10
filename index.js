@@ -178,6 +178,29 @@ const run = async () => {
       }
     );
 
+    // update material study session
+    app.patch(
+      "/update-study-session-material/:id",
+      verifyToken,
+      verifyTutor,
+      async (req, res) => {
+        const id = req.params.id;
+        const data = req.body;
+        const query = { _id: new ObjectId(id) };
+        const updatedStudySessionMaterial = {
+          $set: {
+            materialImageUrl: data?.materialImageUrl,
+            materialLink: data?.materialLink,
+          },
+        };
+        const result = await studySessionMaterial.updateOne(
+          query,
+          updatedStudySessionMaterial
+        );
+        res.send(result);
+      }
+    );
+
     // get accepted study session detailes
     app.get("/study-session-detailes/:id", async (req, res) => {
       const id = req.params.id;
