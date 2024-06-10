@@ -143,6 +143,19 @@ const run = async () => {
       res.send(result);
     });
 
+    // delete study session
+    app.delete(
+      "/study-session/:id",
+      verifyToken,
+      verifyAdmin,
+      async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await studySession.deleteOne(query);
+        res.send(result);
+      }
+    );
+
     // view study session rejected reson & feedback
     app.get("/view-rejected-reson-feedback/:id", async (req, res) => {
       const id = req.params.id;
