@@ -62,7 +62,7 @@ const client = new MongoClient(uri, {
 // connect to MongoDB
 const run = async () => {
   try {
-    await client.connect();
+    // await client.connect();
 
     // created a new MongoDB Database Collection
     const studySession = client.db("EduCollaborate").collection("StudySession");
